@@ -1,0 +1,56 @@
+from statsmodels.tsa.arima.model import ARIMA
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+def train_test_split(series, test_size=1):
+    """
+    Splits the time series into training and test sets.
+    """
+    train = series[:-test_size]
+    test = series[-test_size:]
+    return train, test
+
+def evaluate_model(train, test, order=(1, 1, 1)):
+    """
+    Fits an ARIMA model, forecasts, and returns RMSE.
+    """
+    model = ARIMA(train, order=order)
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps=len(test))
+    rmse = np.sqrt(mean_squared_error(test, forecast))
+    return rmse
+
+def forecast_next_month(series, product_name, order=(1, 1, 1)):
+    """
+    Splits data, evaluates ARIMA, plots and forecasts next month's value.
+    """
+    train, test = train_test_split(series)
+    rmse = evaluate_model(train, test, order)
+
+    print(f"[{product_name}] RMSE on last known value: {rmse:.2f}")
+
+    model = ARIMA(series, order=order)
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps=1)
+
+    print(f"[{product_name}] Forecast for next month: {forecast.iloc[0]:.2f}")
+
+    # Plot
+    plt.figure(figsize=(8, 4))
+    plt.plot(series, label="Historical Sales")
+    plt.scatter(series.index[-1] + pd.DateOffset(months=1), forecast.iloc[0],
+                color="red", label="Next Month Forecast")
+    plt.axvline(x=series.index[-1], color="gray", linestyle="--")
+    plt.title(f"{product_name} - Forecast & RMSE")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    return forecast.iloc[0]
+
+    forecast_next_month(df['Washing_Machine'], "Washing Machine")
+    forecast_next_month(df['Dishwasher'], "Dishwasher")
+    forecast_next_month(df['Refrigerator'], "Refrigerator")
+
