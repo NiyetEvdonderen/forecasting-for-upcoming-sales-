@@ -9,7 +9,7 @@ The data is assumed to be **monthly sales figures**, and the forecasting is done
 
 ---
 
-## 🔍 Features
+## Features
 
 - **Train-Test Split**: Last month’s data was collected to evaluate performance.
 - **Error Metric**: Calculates RMSE to measure prediction accuracy.
@@ -18,7 +18,7 @@ The data is assumed to be **monthly sales figures**, and the forecasting is done
 
 ---
 
-## 🛠️ Requirements
+## Requirements
 
 ```bash
 pip install pandas matplotlib statsmodels scikit-learn
